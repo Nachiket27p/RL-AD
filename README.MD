@@ -9,7 +9,7 @@
 * There are also various methodologies, some only use reinforcement learning, others use a combination of planning and reinforcement learning. For the current standpoint the planning combines with reinforcement leaning has shown more effective autonomous driving capabilities but is also more complicated to implement.
 * The full project proposal: [Proposal]
 
-[Proposal]:https://github.com/Nachiket27p/Reinforcement_Learning-Autonomous_Driving/Paper/csc720_project_proposal.pfd
+[Proposal]:https://github.com/Nachiket27p/Reinforcement_Learning-Autonomous_Driving/blob/master/Paper/csc720_project_proposal.pdf
 
 ## Implementation
 * TODO:
