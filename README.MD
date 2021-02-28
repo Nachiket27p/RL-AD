@@ -11,5 +11,29 @@
 
 [Proposal]:https://github.com/Nachiket27p/Reinforcement_Learning-Autonomous_Driving/Paper/csc720_project_proposal.pfd
 
+## Progress Update
+* 02/16/21
+  * Created project proposal
+* 02/21/21
+  * Explored explored various training environments in AirSim.
+* 02/22/21
+  * Discovered CARLA simulator, another simulation environment.
+* 02/28/21
+  * Selected two traning environments from AirSim. Decided to continue with AirSim instead of CARLA.
+    * Blocks - A open sandbox to perform initial testing
+    * AirSimNH - A small neighbouthood environmnet
+  * Created samll script to run test environment to ensure they run sufficiently.
+    * Set testing resolution to 720p for both environments
+* 
+
+
+....
+
+
 ## Implementation
-* TODO:
+### Setup Environment
+* Obtain AirSim binaries along with the two environments; Blocks, and AirSimNH.
+* Follow AirSim instruction and build it
+* ...
+
+....
