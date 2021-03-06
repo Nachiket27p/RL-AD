@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./../environments/Blocks/Blocks.sh -ResX=640 -ResY=480 -windowed
+

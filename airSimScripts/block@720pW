@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./../Blocks/Blocks.sh -ResX=1280 -ResY=720 -windowed
