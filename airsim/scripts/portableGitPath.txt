@@ -1,0 +1,1 @@
+"git.path": "C:\\Users\\nnpatel5\\Document\\csc720\\PortableGit\\cmd\\git.exe"
