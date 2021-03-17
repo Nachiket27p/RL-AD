@@ -7,7 +7,7 @@ import time
 import gym
 from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
-
+from PIL import Image
 
 class AirSimCarEnv2(AirSimEnv):
     def __init__(self, ip_address, image_shape):
@@ -25,10 +25,12 @@ class AirSimCarEnv2(AirSimEnv):
         self.car = airsim.CarClient(ip=ip_address)
         self.action_space = spaces.Discrete(6)
 
+        # image being requested
         self.image_request = airsim.ImageRequest(
             "0", airsim.ImageType.DepthPerspective, True, False
         )
 
+        # accessing airsim API to control the car
         self.car_controls = airsim.CarControls()
         self.car_state = None
 
@@ -45,6 +47,7 @@ class AirSimCarEnv2(AirSimEnv):
     def __del__(self):
         self.car.reset()
 
+    # need to define more states for finer control
     def _do_action(self, action):
         self.car_controls.brake = 0
         self.car_controls.throttle = 1
@@ -70,12 +73,10 @@ class AirSimCarEnv2(AirSimEnv):
         img1d = 255 / np.maximum(np.ones(img1d.size), img1d)
         img2d = np.reshape(img1d, (responses[0].height, responses[0].width))
 
-        from PIL import Image
-
         image = Image.fromarray(img2d)
-        im_final = np.array(image.resize((84, 84)).convert("L"))
+        im_final = np.array(image.convert("L"))
 
-        return im_final.reshape([84, 84, 1])
+        return im_final.reshape([self.image_shape[0], self.image_shape[1], 1])
 
     def _get_obs(self):
         responses = self.car.simGetImages([self.image_request])

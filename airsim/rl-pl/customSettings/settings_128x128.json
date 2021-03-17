@@ -1,0 +1,46 @@
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "ClockSpeed": 1,
+  "ViewMode": "NoDisplay",
+  "CameraDefaults": {
+      "CaptureSettings": [
+		{
+          "ImageType": 0,
+          "Width": 128,
+          "Height": 128,
+          "FOV_Degrees": 90,
+          "MotionBlurAmount": 0
+        },
+        {
+          "ImageType": 1,
+          "Width": 128,
+          "Height": 128,
+          "FOV_Degrees": 90,
+          "MotionBlurAmount": 0
+        },
+        {
+          "ImageType": 2,
+          "Width": 128,
+          "Height": 128,
+          "FOV_Degrees": 90,
+          "MotionBlurAmount": 0
+        },
+		{
+          "ImageType": 3,
+          "Width": 128,
+          "Height": 128,
+          "FOV_Degrees": 90,
+          "MotionBlurAmount": 0
+        },
+        {
+          "ImageType": 4,
+          "Width": 128,
+          "Height": 128,
+          "FOV_Degrees": 90,
+          "MotionBlurAmount": 0
+        }
+    ]
+  }
+  
+}

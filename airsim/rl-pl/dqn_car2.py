@@ -9,6 +9,11 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecTransposeImage
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback
 
+# use this to adjust the image size being collected from the environment
+# Ensure you read the 'README.md' to understand how to match the image size
+imageX = 128
+imageY = 128
+
 # Create a DummyVecEnv for main airsim gym env
 env = DummyVecEnv(
     [
@@ -16,7 +21,7 @@ env = DummyVecEnv(
             gym.make(
                 "airgym:airsim-car-v2",
                 ip_address="127.0.0.1",
-                image_shape=(84, 84, 1),
+                image_shape=(imageX, imageY, 1),
             )
         )
     ]
@@ -64,4 +69,4 @@ model.learn(
 )
 
 # Save policy weights
-model.save("dqn_airsim_car_policy")
+model.save("dqn_airsim_car_v2_policy")
