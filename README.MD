@@ -30,7 +30,14 @@
   * With the main development system chaning to Windows, an additional environment can be added to the list of training environments.
     * City - A large city environment with stationary traffic to navigate, no pedestarians.
   * Pushed compiled AirSim to github.
-* 
+* 03/15/21
+  * Created a modified version of the base model provided
+  * Modified to redice amount of image resizing by collecing exact image size for performance reasons (~10%)
+  * Explored three algorithms:
+    * DQN (Deep Q Network)
+    * QRDQN (Quantile Regression DQN)
+    * HER (Hindsight Experience Replay)
+  * 
 
 
 ....

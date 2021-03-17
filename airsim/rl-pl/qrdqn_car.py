@@ -8,6 +8,7 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecTransposeImage
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback
+from sb3_contrib import QRDQN
 
 # use this to adjust the image size being collected from the environment
 # Ensure you read the 'README.md' to understand how to match the image size
@@ -31,7 +32,7 @@ env = DummyVecEnv(
 env = VecTransposeImage(env)
 
 # Initialize RL algorithm type and parameters
-model = DQN(
+model = QRDQN(
     "CnnPolicy",
     env,
     learning_rate=0.00025,

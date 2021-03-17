@@ -9,7 +9,7 @@ from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
 from PIL import Image
 
-class AirSimCarEnv2(AirSimEnv):
+class AirSimCarEnvQRDQN(AirSimEnv):
     def __init__(self, ip_address, image_shape):
         super().__init__(image_shape)
 
