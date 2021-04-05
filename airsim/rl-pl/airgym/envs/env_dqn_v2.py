@@ -9,6 +9,19 @@ from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
 from PIL import Image
 
+cols = 9
+rows = 9
+actionMatrix = [[None for i in range(cols)] for j in range(rows)]
+
+gasbreak = -1.0  # negative means break. pos means gas
+for i in range(rows):
+    steer = -1.0
+    for j in range(cols):
+        actionMatrix[i][j] = (steer, gasbreak)
+        steer += 0.25
+    gasbreak += 0.25
+
+
 class AirSimCarEnvDQNV2(AirSimEnv):
     def __init__(self, ip_address, image_shape):
         super().__init__(image_shape)
@@ -23,11 +36,11 @@ class AirSimCarEnvDQNV2(AirSimEnv):
         }
 
         self.car = airsim.CarClient(ip=ip_address)
-        self.action_space = spaces.Discrete(6)
+        self.action_space = spaces.Discrete(int(rows * cols))
 
         # image being requested
         self.image_request = airsim.ImageRequest(
-            "0", airsim.ImageType.DepthPerspective, True, False
+            "0", airsim.ImageType.DepthVis, True, False
         )
 
         # accessing airsim API to control the car
@@ -49,21 +62,14 @@ class AirSimCarEnvDQNV2(AirSimEnv):
 
     # need to define more states for finer control
     def _do_action(self, action):
-        self.car_controls.brake = 0
-        self.car_controls.throttle = 1
-        if action == 0:
-            self.car_controls.throttle = 0
-            self.car_controls.brake = 1
-        elif action == 1:
-            self.car_controls.steering = 0
-        elif action == 2:
-            self.car_controls.steering = 0.5
-        elif action == 3:
-            self.car_controls.steering = -0.5
-        elif action == 4:
-            self.car_controls.steering = 0.25
+        steer, gasbreak = actionMatrix[action // rows][action % cols]
+        self.car_controls.steering = steer
+        if gasbreak == 0:
+            self.car_controls.brake = 1.0
+            self.car_controls.throttle = 0.0
         else:
-            self.car_controls.steering = -0.25
+            self.car_controls.brake = 0.0
+            self.car_controls.throttle = gasbreak
 
         self.car.setCarControls(self.car_controls)
         time.sleep(1)
@@ -92,8 +98,8 @@ class AirSimCarEnvDQNV2(AirSimEnv):
         return image
 
     def _compute_reward(self):
-        MAX_SPEED = 300
-        MIN_SPEED = 10
+        MAX_SPEED = 50
+        MIN_SPEED = 5
         thresh_dist = 3.5
         beta = 3
 
@@ -125,16 +131,15 @@ class AirSimCarEnvDQNV2(AirSimEnv):
             reward = -3
         else:
             reward_dist = math.exp(-beta * dist) - 0.5
-            reward_speed = (
-                (self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)
-            ) - 0.5
+            reward_speed = ((self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) - 0.5
             reward = reward_dist + reward_speed
 
+        # print(reward)
         done = 0
-        if reward < -1:
+        if reward < -2:
             done = 1
         if self.car_controls.brake == 0:
-            if self.car_state.speed <= 1:
+            if self.car_state.speed < 0.1:
                 done = 1
         if self.state["collision"]:
             done = 1
@@ -150,5 +155,5 @@ class AirSimCarEnvDQNV2(AirSimEnv):
 
     def reset(self):
         self._setup_car()
-        self._do_action(1)
+        self._do_action(40)
         return self._get_obs()
