@@ -12,7 +12,7 @@ from sb3_contrib import QRDQN
 
 # use this to adjust the image size being collected from the environment
 # Ensure you read the 'README.md' to understand how to match the image size
-imageX = 128
+imageX = 384
 imageY = 128
 
 # Create a DummyVecEnv for main airsim gym env
@@ -20,7 +20,7 @@ env = DummyVecEnv(
     [
         lambda: Monitor(
             gym.make(
-                "airgym:airsim-car-dqn-v2",
+                "airgym:airsim-car-qrdqn-v0",
                 ip_address="127.0.0.1",
                 image_shape=(imageX, imageY, 1),
             )
@@ -46,7 +46,7 @@ model = QRDQN(
     exploration_fraction=0.1,
     exploration_final_eps=0.01,
     device="cuda",
-    tensorboard_log="./logs_dqn_car_v2/",
+    tensorboard_log="./logs_qrdqn_car_v2/",
 )
 
 # Create an evaluation callback with the same env, called every 10000 iterations

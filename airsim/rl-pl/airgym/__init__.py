@@ -9,5 +9,5 @@ register(
 )
 
 register(
-    id="airsim-car-qrdqn", entry_point="airgym.envs:AirSimCarEnvQRDQN",
+    id="airsim-car-qrdqn-v0", entry_point="airgym.envs:AirSimCarEnvQRDQN",
 )

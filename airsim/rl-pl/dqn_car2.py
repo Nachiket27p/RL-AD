@@ -11,7 +11,7 @@ from stable_baselines3.common.callbacks import EvalCallback
 
 # use this to adjust the image size being collected from the environment
 # Ensure you read the 'README.md' to understand how to match the image size
-imageX = 128
+imageX = 384
 imageY = 128
 
 # Create a DummyVecEnv for main airsim gym env
