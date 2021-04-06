@@ -9,17 +9,19 @@ from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
 from PIL import Image
 
-cols = 9
+cols = 17
 rows = 9
+# selects the middle element in the last row
+origin = (rows * cols) - math.ceil(float(cols)/2)
 actionMatrix = [[None for i in range(cols)] for j in range(rows)]
 
-gasbreak = -1.0  # negative means break. pos means gas
+gasbreak = 1.0  # pos means gas, zero means break
 for i in range(rows):
     steer = -1.0
     for j in range(cols):
         actionMatrix[i][j] = (steer, gasbreak)
-        steer += 0.25
-    gasbreak += 0.25
+        steer += 2.0/(cols-1)
+    gasbreak -= 1.0/(rows-1)
 
 
 class AirSimCarEnvDQNV2(AirSimEnv):
@@ -62,7 +64,9 @@ class AirSimCarEnvDQNV2(AirSimEnv):
 
     # need to define more states for finer control
     def _do_action(self, action):
-        steer, gasbreak = actionMatrix[action // rows][action % cols]
+        # print(action, action // cols, action % cols)
+        steer, gasbreak = actionMatrix[action // cols][action % cols]
+
         self.car_controls.steering = steer
         if gasbreak == 0:
             self.car_controls.brake = 1.0
@@ -98,9 +102,9 @@ class AirSimCarEnvDQNV2(AirSimEnv):
         return image
 
     def _compute_reward(self):
-        MAX_SPEED = 50
-        MIN_SPEED = 5
-        thresh_dist = 3.5
+        MAX_SPEED = 15
+        MIN_SPEED = 2
+        thresh_dist = 2
         beta = 3
 
         z = 0
@@ -122,24 +126,27 @@ class AirSimCarEnvDQNV2(AirSimEnv):
         for i in range(0, len(pts) - 1):
             dist = min(
                 dist,
-                np.linalg.norm(np.cross((car_pt - pts[i]), (car_pt - pts[i + 1])))
-                / np.linalg.norm(pts[i] - pts[i + 1]),
+                np.linalg.norm(np.cross((car_pt - pts[i]), (car_pt - pts[i + 1]))) / np.linalg.norm(pts[i] - pts[i + 1]),
             )
 
-        # print(dist)
+        print('dist:', dist)
+        print('speed:', self.car_state.speed)
+
         if dist > thresh_dist:
             reward = -3
         else:
             reward_dist = math.exp(-beta * dist) - 0.5
             reward_speed = ((self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) - 0.5
             reward = reward_dist + reward_speed
+            print('reward(dist, speed):', reward_dist, reward_speed)
 
-        # print(reward)
+
+
         done = 0
-        if reward < -2:
+        if reward < -1:
             done = 1
         if self.car_controls.brake == 0:
-            if self.car_state.speed < 0.1:
+            if self.car_state.speed < 0.2:
                 done = 1
         if self.state["collision"]:
             done = 1
@@ -155,5 +162,5 @@ class AirSimCarEnvDQNV2(AirSimEnv):
 
     def reset(self):
         self._setup_car()
-        self._do_action(40)
+        self._do_action(origin)
         return self._get_obs()
