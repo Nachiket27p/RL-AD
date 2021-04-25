@@ -12,7 +12,7 @@ from PIL import Image
 cols = 17
 rows = 9
 # selects the middle element in the last row
-origin = (rows * cols) - math.ceil(float(cols)/2)
+origin = (rows * cols) - math.ceil(float(cols) / 2)
 actionMatrix = [[None for i in range(cols)] for j in range(rows)]
 
 gasbreak = 1.0  # pos means gas, zero means break
@@ -20,8 +20,8 @@ for i in range(rows):
     steer = -1.0
     for j in range(cols):
         actionMatrix[i][j] = (steer, gasbreak)
-        steer += 2.0/(cols-1)
-    gasbreak -= 1.0/(rows-1)
+        steer += 2.0 / (cols - 1)
+    gasbreak -= 1.0 / (rows - 1)
 
 
 class AirSimCarEnvDQNV2(AirSimEnv):
@@ -41,9 +41,10 @@ class AirSimCarEnvDQNV2(AirSimEnv):
         self.action_space = spaces.Discrete(int(rows * cols))
 
         # image being requested
-        self.image_request = airsim.ImageRequest(
-            "0", airsim.ImageType.DepthVis, True, False
-        )
+        self.image_request = [
+            airsim.ImageRequest(0, airsim.ImageType.Segmentation, True),
+            airsim.ImageRequest(0, airsim.ImageType.DisparityNormalized, True)
+        ]
 
         # accessing airsim API to control the car
         self.car_controls = airsim.CarControls()
@@ -139,8 +140,6 @@ class AirSimCarEnvDQNV2(AirSimEnv):
             reward_speed = ((self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) - 0.5
             reward = reward_dist + reward_speed
             print('reward(dist, speed):', reward_dist, reward_speed)
-
-
 
         done = 0
         if reward < -1:
