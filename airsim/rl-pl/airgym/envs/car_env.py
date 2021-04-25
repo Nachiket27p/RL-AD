@@ -7,6 +7,7 @@ import time
 import gym
 from gym import spaces
 from airgym.envs.airsim_env import AirSimEnv
+from PIL import Image
 
 
 class AirSimCarEnv(AirSimEnv):
@@ -70,12 +71,10 @@ class AirSimCarEnv(AirSimEnv):
         img1d = 255 / np.maximum(np.ones(img1d.size), img1d)
         img2d = np.reshape(img1d, (responses[0].height, responses[0].width))
 
-        from PIL import Image
-
         image = Image.fromarray(img2d)
-        im_final = np.array(image.resize((84, 84)).convert("L"))
+        im_final = np.array(image.convert("L"))
 
-        return im_final.reshape([84, 84, 1])
+        return im_final.reshape([self.image_shape[0], self.image_shape[1], 1])
 
     def _get_obs(self):
         responses = self.car.simGetImages([self.image_request])
@@ -91,9 +90,9 @@ class AirSimCarEnv(AirSimEnv):
         return image
 
     def _compute_reward(self):
-        MAX_SPEED = 300
-        MIN_SPEED = 10
-        thresh_dist = 3.5
+        MAX_SPEED = 15
+        MIN_SPEED = 2
+        thresh_dist = 2
         beta = 3
 
         z = 0
@@ -115,25 +114,25 @@ class AirSimCarEnv(AirSimEnv):
         for i in range(0, len(pts) - 1):
             dist = min(
                 dist,
-                np.linalg.norm(np.cross((car_pt - pts[i]), (car_pt - pts[i + 1])))
-                / np.linalg.norm(pts[i] - pts[i + 1]),
+                np.linalg.norm(np.cross((car_pt - pts[i]), (car_pt - pts[i + 1]))) / np.linalg.norm(pts[i] - pts[i + 1]),
             )
 
-        # print(dist)
+        # print('dist:', dist)
+        # print('speed:', self.car_state.speed)
+        
         if dist > thresh_dist:
             reward = -3
         else:
             reward_dist = math.exp(-beta * dist) - 0.5
-            reward_speed = (
-                (self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)
-            ) - 0.5
+            reward_speed = ((self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) - 0.5
             reward = reward_dist + reward_speed
+            # print('reward(dist, speed):', reward_dist, reward_speed)
 
         done = 0
         if reward < -1:
             done = 1
         if self.car_controls.brake == 0:
-            if self.car_state.speed <= 1:
+            if self.car_state.speed < 0.2:
                 done = 1
         if self.state["collision"]:
             done = 1
