@@ -65,7 +65,7 @@ kwargs["callback"] = callbacks
 
 # Train for a certain number of timesteps
 model.learn(
-    total_timesteps=5e5, tb_log_name="dqn_airsim_car_v2_run_" + str(time.time()), **kwargs
+    total_timesteps=1e5, tb_log_name="dqn_airsim_car_v2_run_" + str(time.time()), **kwargs
 )
 
 # Save policy weights
