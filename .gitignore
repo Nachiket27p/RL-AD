@@ -1,4 +1,8 @@
 /airsim/environments
 /airsim/AirSim-1.4.0-linux.tar.gz
 /airsim/AirSim-1.4.0-windows-compiled.7z
-
+/airsim/rl-pl/logs_dqn_car_v2/models/timeSteps100000/model
+/airsim/rl-pl/logs_dqn_car/models/timeSteps70000/model
+/airsim/rl-pl/__pycache__
+/airsim/rl-pl/airgym/__pycache__
+/airsim/rl-pl/airgym/envs/__pycache__
